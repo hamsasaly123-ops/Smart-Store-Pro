@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SmartStore Pro - نظام إدارة المبيعات والمخزون</title>
+    
+    <!-- CSS Stylesheets -->
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/print.css">
+</head>
+<body>
+
+    <!-- 0. LOGIN VIEW -->
+    <div id="view-login" class="view-section" style="min-height: 100vh; background: var(--bg-main); display: flex; align-items: center; justify-content: center;">
+        <div style="width: 100%; max-width: 420px; padding: 1.5rem; margin: auto;">
+            <div class="card" style="box-shadow: var(--shadow-xl); border-radius: var(--radius-lg); text-align: center; padding: 2rem 1.5rem;">
+                <div class="brand-icon" style="width: 64px; height: 64px; margin: 0 auto 1.25rem; font-size: 2rem; border-radius: 18px;">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                </div>
+                <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem;">SmartStore Pro</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">إدارة المبيعات والمخزون للمحلات (Offline)</p>
+
+                <form id="form-login">
+                    <div class="form-group" style="text-align: right;">
+                        <label class="form-label">أدخل رمز PIN أو اسم المستخدم</label>
+                        <input type="password" id="login-pin" class="form-control" placeholder="1234 أو 0000" required autofocus style="text-align: center; font-size: 1.3rem; letter-spacing: 4px; font-weight: bold;">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem; padding: 0.75rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                            <polyline points="10 17 15 12 10 7"></polyline>
+                            <line x1="15" y1="12" x2="3" y2="12"></line>
+                        </svg>
+                        دخول إلى النظام
+                    </button>
+                </form>
+
+                <div style="margin-top: 1.25rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                    <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.6rem;">دخول سريع بنقرة واحدة:</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
+                        <button type="button" class="btn btn-sm btn-outline" onclick="quickLogin('1234')">
+                            🛡️ دخول كمدير (1234)
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline" onclick="quickLogin('0000')">
+                            💼 دخول ككاشير (0000)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP SHELL -->
+    <div id="app-shell" style="display: none;">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="app-sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="brand" onclick="navigateTo('dashboard'); return false;">
+                    <div class="brand-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <path d="M16 10a4 4 0 0 1-8 0"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="brand-title">SmartStore Pro</div>
+                        <span class="brand-subtitle">المتجر الذكي المحلي</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="sidebar-menu">
+                <span class="menu-category">العمليات اليومية</span>
+                <a class="nav-item active" data-view="dashboard">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    <span>لوحة التحكم</span>
+                </a>
+                <a class="nav-item" data-view="pos">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                    <span>المبيعات و POS</span>
+                </a>
+                <a class="nav-item" data-view="sales">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <span>فواتير المبيعات</span>
+                </a>
+
+                <span class="menu-category">المخزن والتوريد</span>
+                <a class="nav-item" data-view="products">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>المنتجات والمخزون</span>
+                    <span id="nav-low-stock-badge" class="nav-badge" style="display: none;">0</span>
+                </a>
+                <a class="nav-item" data-view="purchases">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                    <span>فواتير المشتريات</span>
+                </a>
+
+                <span class="menu-category">الأطراف والمالية</span>
+                <a class="nav-item" data-view="customers">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <span>العملاء والديون</span>
+                </a>
+                <a class="nav-item" data-view="suppliers">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                    <span>الموردون</span>
+                </a>
+                <a class="nav-item" data-view="expenses">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    <span>الأرباح والمصروفات</span>
+                </a>
+                <a class="nav-item" data-view="reports">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    <span>التقارير والإحصائيات</span>
+                </a>
+
+                <span class="menu-category">النظام</span>
+                <a class="nav-item" data-view="settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    <span>الإعدادات والمظهر</span>
+                </a>
+                <a class="nav-item" data-view="backup">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    <span>النسخ الاحتياطي والاستعادة</span>
+                </a>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div id="sidebar-user-avatar" class="user-avatar">م</div>
+                    <div>
+                        <div id="sidebar-user-name" class="user-name">المدير</div>
+                        <div id="sidebar-user-role" class="user-role">مدير النظام</div>
+                    </div>
+                </div>
+                <button id="btn-logout" class="btn-icon btn-sm btn-outline text-danger" title="تسجيل الخروج">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Sidebar Mobile Overlay -->
+        <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+        <!-- Main Content Area -->
+        <div class="main-wrapper">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button id="btn-toggle-sidebar" class="btn btn-icon btn-outline">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <div class="page-title-wrap">
+                        <h1 id="top-store-title">SmartStore Pro</h1>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <button class="btn btn-sm btn-primary" onclick="navigateTo('pos')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        نقطة بيع سريعة
+                    </button>
+                    <button id="btn-toggle-theme" class="btn btn-icon btn-outline" title="تبديل المظهر">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Scrollable Content Screen Container -->
+            <main class="content-area">
+
+                <!-- 1. DASHBOARD VIEW -->
+                <section id="view-dashboard" class="view-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <span class="stat-label">مبيعات اليوم</span>
+                                <span id="dash-today-sales" class="stat-value">0.00 ر.س</span>
+                                <span class="stat-subtext">إجمالي المبيعات المحققة</span>
+                            </div>
+                            <div class="stat-icon-wrap blue">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <span class="stat-label">صافي أرباح اليوم</span>
+                                <span id="dash-today-profit" class="stat-value text-success">0.00 ر.س</span>
+                                <span class="stat-subtext">المبيعات - التكلفة - المصروفات</span>
+                            </div>
+                            <div class="stat-icon-wrap green">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <span class="stat-label">إجمالي المنتجات</span>
+                                <span id="dash-products-count" class="stat-value">0</span>
+                                <span class="stat-subtext">الأصناف المسجلة بالمخزن</span>
+                            </div>
+                            <div class="stat-icon-wrap cyan">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <span class="stat-label">نواقص المخزون</span>
+                                <span id="dash-low-stock-count" class="stat-value text-danger">0</span>
+                                <span class="stat-subtext">أصناف وصلت لحد الطلب</span>
+                            </div>
+                            <div class="stat-icon-wrap red">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+                        <!-- Recent Sales -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+                                    آخر عمليات البيع
+                                </div>
+                                <button class="btn btn-sm btn-outline" onclick="navigateTo('sales')">عرض الكل</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>الفاتورة</th>
+                                            <th>العميل</th>
+                                            <th>الوقت</th>
+                                            <th>الإجمالي</th>
+                                            <th>إجراء</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dash-recent-sales-table-body">
+                                        <!-- Dynamically generated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Low Stock Products -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title text-danger">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>
+                                    المنتجات منخفضة المخزون
+                                </div>
+                                <button class="btn btn-sm btn-outline" onclick="navigateTo('products')">إدارة المخزون</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>المنتج</th>
+                                            <th>المتبقي</th>
+                                            <th>الحد الأدنى</th>
+                                            <th>تعديل</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dash-low-stock-table-body">
+                                        <!-- Dynamically generated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. POS SCREEN -->
+                <section id="view-pos" class="view-section">
+                    <div class="pos-layout">
+                        <!-- Products Catalog -->
+                        <div class="pos-catalog">
+                            <div class="pos-catalog-header">
+                                <div class="form-row" style="margin-bottom: 0;">
+                                    <div class="search-input-wrap">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                        <input type="text" id="pos-search-input" class="search-input" placeholder="ابحث باسم المنتج أو الباركود...">
+                                    </div>
+                                    <div>
+                                        <input type="text" id="pos-barcode-input" class="form-control" placeholder="قارئ الباركود (اضغط Enter)">
+                                    </div>
+                                </div>
+                                <div id="pos-categories-container" class="category-pills">
+                                    <!-- Dynamic Category Pills -->
+                                </div>
+                            </div>
+                            <div id="pos-products-grid" class="pos-products-grid">
+                                <!-- Dynamic Product Cards -->
+                            </div>
+                        </div>
+
+                        <!-- Live Cart & Checkout Panel -->
+                        <div class="pos-cart">
+                            <div class="pos-cart-header">
+                                <div style="font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                                    سلة الفاتورة الحالية
+                                </div>
+                                <button class="btn btn-sm btn-outline text-danger" onclick="SalesManager.clearCart(); updateCartUI();">تفريغ</button>
+                            </div>
+
+                            <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border-color); background: var(--bg-surface-alt);">
+                                <label class="form-label" style="margin-bottom: 0.2rem;">العميل:</label>
+                                <select id="pos-customer-select" class="form-control" style="padding: 0.4rem 0.6rem;">
+                                    <!-- Dynamic options -->
+                                </select>
+                            </div>
+
+                            <div id="pos-cart-items" class="pos-cart-items">
+                                <!-- Cart items injected here -->
+                            </div>
+
+                            <div class="pos-cart-summary">
+                                <div class="summary-line">
+                                    <span>المجموع الفرعي:</span>
+                                    <span id="pos-subtotal">0.00 ر.س</span>
+                                </div>
+                                <div class="summary-line">
+                                    <span>الخصم:</span>
+                                    <span id="pos-discount-amount">0.00 ر.س</span>
+                                </div>
+                                <div class="summary-line">
+                                    <span>الضريبة:</span>
+                                    <span id="pos-tax-amount">0.00 ر.س</span>
+                                </div>
+                                <div class="summary-line total">
+                                    <span>الإجمالي المطلوب:</span>
+                                    <span id="pos-final-total">0.00 ر.س</span>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+                                    <div>
+                                        <label class="form-label" style="font-size: 0.72rem;">خصم (مبلغ ثابت):</label>
+                                        <input type="number" id="pos-discount-input" class="form-control" value="0" min="0" oninput="updateCartUI()">
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.4rem; padding-top: 1.2rem;">
+                                        <input type="checkbox" id="pos-apply-tax" onchange="updateCartUI()">
+                                        <label for="pos-apply-tax" style="font-size: 0.8rem; cursor: pointer;">تطبيق الضريبة</label>
+                                    </div>
+                                </div>
+
+                                <div style="margin-top: 0.4rem;">
+                                    <label class="form-label" style="font-size: 0.75rem;">طريقة الدفع:</label>
+                                    <div style="display: flex; gap: 0.75rem;">
+                                        <label style="font-size: 0.85rem; cursor: pointer;"><input type="radio" name="pos_payment" value="cash" checked> نقداً</label>
+                                        <label style="font-size: 0.85rem; cursor: pointer;"><input type="radio" name="pos_payment" value="card"> بطاقة/شبكة</label>
+                                        <label style="font-size: 0.85rem; cursor: pointer;"><input type="radio" name="pos_payment" value="credit"> آجل (دين)</label>
+                                    </div>
+                                </div>
+
+                                <div class="pos-checkout-actions">
+                                    <button class="btn btn-success" style="grid-column: 1/-1; padding: 0.85rem;" onclick="processPOSCheckout()">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        إتمام البيع وطباعة الفاتورة
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. PRODUCTS & INVENTORY VIEW -->
+                <section id="view-products" class="view-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">قائمة المنتجات والمخزون</div>
+                            <button class="btn btn-primary" onclick="openProductModal()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                إضافة منتج جديد
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="filter-bar">
+                                <div class="search-input-wrap">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                    <input type="text" id="products-search-input" class="search-input" placeholder="ابحث باسم المنتج، الباركود، أو القسم...">
+                                </div>
+                                <select id="products-category-filter" class="form-control" style="width: auto; min-width: 160px;">
+                                    <option value="all">كل الأقسام</option>
+                                </select>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; cursor: pointer;">
+                                    <input type="checkbox" id="products-low-stock-check">
+                                    عرض النواقص فقط
+                                </label>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>اسم المنتج</th>
+                                            <th>الباركود</th>
+                                            <th>القسم</th>
+                                            <th>سعر الشراء</th>
+                                            <th>سعر البيع</th>
+                                            <th>المخزون الحالي</th>
+                                            <th>إجراءات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="products-table-body">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. SALES HISTORY VIEW -->
+                <section id="view-sales" class="view-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">سجل فواتير المبيعات</div>
+                            <button class="btn btn-outline" onclick="ReportsManager.exportToCSV('sales')">تصدير الفواتير إلى Excel (CSV)</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>رقم الفاتورة</th>
+                                            <th>التاريخ والوقت</th>
+                                            <th>العميل</th>
+                                            <th>الأصناف</th>
+                                            <th>الإجمالي</th>
+                                            <th>طريقة الدفع</th>
+                                            <th>معاينة</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="sales-history-table-body">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. PURCHASES VIEW -->
+                <section id="view-purchases" class="view-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">سجل فواتير المشتريات وتوريد المخزون</div>
+                            <button class="btn btn-primary" onclick="openNewPurchaseModal()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                تسجيل فاتورة شراء جديدة
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>رقم الفاتورة</th>
+                                            <th>التاريخ</th>
+                                            <th>المورد</th>
+                                            <th>الأصناف</th>
+                                            <th>الإجمالي</th>
+                                            <th>حالة السداد</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="purchases-table-body">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. CUSTOMERS VIEW -->
+                <section id="view-customers" class="view-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">إدارة العملاء والديون</div>
+                            <button class="btn btn-primary" onclick="openCustomerModal()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                إضافة عميل جديد
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="filter-bar">
+                                <div class="search-input-wrap">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                    <input type="text" id="customers-search-input" class="search-input" placeholder="ابحث باسم العميل أو رقم الهاتف..." oninput="renderCustomersList()">
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>اسم العميل</th>
+                                            <th>الهاتف</th>
+                                            <th>العنوان</th>
+                                            <th>الديون المستحقة</th>
+                                            <th>ملاحظات</th>
+                                            <th>إجراءات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="customers-table-body">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 7. SUPPLIERS VIEW -->
+                <section id="view-suppliers" class="view-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">إدارة الموردين</div>
+                            <button class="btn btn-primary" onclick="openSupplierModal()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                إضافة مورد جديد
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="filter-bar">
+                                <div class="search-input-wrap">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                    <input type="text" id="suppliers-search-input" class="search-input" placeholder="ابحث باسم المورد أو الشركة..." oninput="renderSuppliersList()">
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>اسم المورد</th>
+                                            <th>الشركة / النشاط</th>
+                                            <th>الهاتف</th>
+                                            <th>المستحقات (له)</th>
+                                            <th>العنوان</th>
+                                            <th>إجراءات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="suppliers-table-body">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 8. EXPENSES VIEW -->
+                <section id="view-expenses" class="view-section">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <span class="stat-label">مصروفات اليوم</span>
+                                <span id="exp-today-total" class="stat-value text-danger">0.00 ر.س</span>
+                            </div>
+                            <div class="stat-icon-wrap red">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <span class="stat-label">مجمل ربح المبيعات اليوم</span>
+                                <span id="exp-today-gross" class="stat-value text-primary">0.00 ر.س</span>
+                            </div>
+                            <div class="stat-icon-wrap blue">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <span class="stat-label">صافي الربح الفعلي اليوم</span>
+                                <span id="exp-today-net" class="stat-value text-success">0.00 ر.س</span>
+                            </div>
+                            <div class="stat-icon-wrap green">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">سجل المصروفات التشغيلية</div>
+                            <button class="btn btn-primary" onclick="openExpenseModal()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                إضافة سند صرف
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>بيان المصروف</th>
+                                            <th>التصنيف</th>
+                                            <th>المبلغ</th>
+                                            <th>التاريخ</th>
+                                            <th>إجراء</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="expenses-table-body">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 9. REPORTS VIEW -->
+                <section id="view-reports" class="view-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">التقارير المالية والتحليلات</div>
+                            <div style="display: flex; gap: 0.75rem;">
+                                <select id="reports-time-range" class="form-control" style="width: auto;" onchange="renderReports()">
+                                    <option value="today">اليوم</option>
+                                    <option value="week">آخر 7 أيام</option>
+                                    <option value="month">هذا الشهر</option>
+                                    <option value="all">كل الفترات</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-info">
+                                        <span class="stat-label">عدد الفواتير</span>
+                                        <span id="rep-sales-count" class="stat-value">0</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-info">
+                                        <span class="stat-label">إجمالي الإيرادات</span>
+                                        <span id="rep-total-revenue" class="stat-value text-primary">0.00 ر.س</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-info">
+                                        <span class="stat-label">إجمالي المصروفات</span>
+                                        <span id="rep-total-expenses" class="stat-value text-danger">0.00 ر.س</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-info">
+                                        <span class="stat-label">صافي الربح</span>
+                                        <span id="rep-net-profit" class="stat-value text-success">0.00 ر.س</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                                <div class="card" style="margin-bottom: 0;">
+                                    <div class="card-header"><div class="card-title">توزيع طرق الدفع</div></div>
+                                    <div class="card-body">
+                                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                            <div style="display: flex; justify-content: space-between;">
+                                                <span>نقداً (كاش):</span>
+                                                <strong id="rep-cash-sales">0.00 ر.س</strong>
+                                            </div>
+                                            <div style="display: flex; justify-content: space-between;">
+                                                <span>بطاقة / شبكة:</span>
+                                                <strong id="rep-card-sales">0.00 ر.س</strong>
+                                            </div>
+                                            <div style="display: flex; justify-content: space-between;">
+                                                <span>آجل (ديون):</span>
+                                                <strong id="rep-credit-sales" class="text-danger">0.00 ر.س</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card" style="margin-bottom: 0;">
+                                    <div class="card-header"><div class="card-title">المنتجات الأكثر مبيعاً</div></div>
+                                    <div class="table-responsive">
+                                        <table class="data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>المنتج</th>
+                                                    <th>الكمية المباعة</th>
+                                                    <th>العائد</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="rep-top-products-body">
+                                                <!-- Dynamic rows -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 10. SETTINGS VIEW -->
+                <section id="view-settings" class="view-section">
+                    <div class="card" style="max-width: 800px; margin: 0 auto 1.5rem;">
+                        <div class="card-header">
+                            <div class="card-title">إعدادات المحل والطباعة والمظهر</div>
+                            <span id="lic-status-badge" class="badge badge-success">نسخة مفعّلة</span>
+                        </div>
+                        <div class="card-body">
+                            <form onsubmit="event.preventDefault(); saveSettingsFromForm();">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">اسم المتجر / المحل</label>
+                                        <input type="text" id="set-store-name" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">رقم الهاتف / الجوال</label>
+                                        <input type="text" id="set-store-phone" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">عنوان المتجر</label>
+                                    <input type="text" id="set-store-address" class="form-control">
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">رمز العملة</label>
+                                        <input type="text" id="set-currency" class="form-control" placeholder="ر.س، ج.م، د.ج، $">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">نسبة الضريبة (%)</label>
+                                        <input type="number" id="set-tax-rate" class="form-control" min="0" max="100">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">المظهر المفضل</label>
+                                        <select id="set-theme" class="form-control">
+                                            <option value="light">الوضع الفاتح (Light)</option>
+                                            <option value="dark">الوضع الداكن (Dark)</option>
+                                            <option value="auto">تلقائي حسب نظام الجهاز</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                        <input type="checkbox" id="set-enable-tax">
+                                        تفعيل الضريبة افتراضياً في جميع المبيعات
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">ملاحظات تذييل الفاتورة المطبوعة</label>
+                                    <textarea id="set-invoice-note" class="form-control" rows="2"></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+                                    حفظ التغييرات
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 11. BACKUP & RESTORE VIEW -->
+                <section id="view-backup" class="view-section">
+                    <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">تصدير نسخة احتياطية (Backup)</div>
+                            </div>
+                            <div class="card-body">
+                                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                    احفظ جميع بيانات المحل (المنتجات، المبيعات، العملاء، الموردين، والمصروفات) في ملف JSON آمن يمكن الاحتفاظ به على هاتفك أو نقله لأي جهاز آخر.
+                                </p>
+                                <button class="btn btn-primary" onclick="triggerBackupExport()">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                    تصدير وتحميل النسخة الاحتياطية الآن
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">استعادة نسخة احتياطية (Restore)</div>
+                            </div>
+                            <div class="card-body">
+                                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                    استرجع بيانات المحل السابقة من ملف النسخة الاحتياطية (.json).
+                                </p>
+                                <div class="form-group">
+                                    <input type="file" id="backup-file-input" accept=".json" class="form-control">
+                                </div>
+                                <button class="btn btn-success" onclick="triggerBackupRestore()">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                    استعادة البيانات من الملف
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">البيانات التجريبية الأولية</div>
+                            </div>
+                            <div class="card-body">
+                                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                    يمكنك إعادة تعبئة النظام بمنتجات وعملاء وموردين تجريبيين لتجربة البرنامج واختباره بسرعة.
+                                </p>
+                                <button class="btn btn-outline" onclick="triggerLoadSampleData()">
+                                    تحميل بيانات تجريبية نموذجية
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD / EDIT PRODUCT -->
+    <div id="modal-product" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div id="modal-product-title" class="modal-title">إضافة منتج جديد</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-product" onsubmit="event.preventDefault(); saveProductFromModal();">
+                    <input type="hidden" id="prod-id">
+                    
+                    <div class="form-group">
+                        <label class="form-label">اسم المنتج *</label>
+                        <input type="text" id="prod-name" class="form-control" required placeholder="مثال: حليب كامل الدسم 1 لتر">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">الباركود</label>
+                            <input type="text" id="prod-barcode" class="form-control" placeholder="امسح أو اترك فارغاً للتوليد">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">القسم / التصنيف</label>
+                            <input type="text" id="prod-category" class="form-control" placeholder="مواد غذائية، منظفات...">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">سعر الشراء (التكلفة) *</label>
+                            <input type="number" id="prod-buy-price" class="form-control" step="0.01" min="0" required value="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">سعر البيع للجمهور *</label>
+                            <input type="number" id="prod-sell-price" class="form-control" step="0.01" min="0" required value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">الكمية بالمخزن *</label>
+                            <input type="number" id="prod-stock" class="form-control" min="0" required value="10">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">حد تنبيه النواقص</label>
+                            <input type="number" id="prod-min-stock" class="form-control" min="1" value="5">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">الوحدة</label>
+                            <input type="text" id="prod-unit" class="form-control" value="قطعة">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">ملاحظات إضافية</label>
+                        <input type="text" id="prod-notes" class="form-control" placeholder="موقع الرف أو تاريخ الصلاحية...">
+                    </div>
+
+                    <div class="modal-footer" style="padding: 1rem 0 0 0; background: transparent;">
+                        <button type="submit" class="btn btn-primary">حفظ المنتج</button>
+                        <button type="button" class="btn btn-outline modal-cancel">إلغاء</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD / EDIT CUSTOMER -->
+    <div id="modal-customer" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div id="modal-customer-title" class="modal-title">بيانات العميل</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-customer" onsubmit="event.preventDefault(); saveCustomerFromModal();">
+                    <input type="hidden" id="cust-id">
+                    <div class="form-group">
+                        <label class="form-label">اسم العميل *</label>
+                        <input type="text" id="cust-name" class="form-control" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">رقم الهاتف</label>
+                            <input type="text" id="cust-phone" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">الرصيد المبدئي (دين سابق)</label>
+                            <input type="number" id="cust-balance" class="form-control" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">العنوان</label>
+                        <input type="text" id="cust-address" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ملاحظات</label>
+                        <input type="text" id="cust-notes" class="form-control">
+                    </div>
+                    <div class="modal-footer" style="padding: 1rem 0 0 0; background: transparent;">
+                        <button type="submit" class="btn btn-primary">حفظ العميل</button>
+                        <button type="button" class="btn btn-outline modal-cancel">إلغاء</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD / EDIT SUPPLIER -->
+    <div id="modal-supplier" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div id="modal-supplier-title" class="modal-title">بيانات المورد</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-supplier" onsubmit="event.preventDefault(); saveSupplierFromModal();">
+                    <input type="hidden" id="supp-id">
+                    <div class="form-group">
+                        <label class="form-label">اسم المورد أو المندوب *</label>
+                        <input type="text" id="supp-name" class="form-control" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">اسم الشركة أو المؤسسة</label>
+                            <input type="text" id="supp-company" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">رقم الهاتف</label>
+                            <input type="text" id="supp-phone" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">الرصيد المبدئي (مستحق له)</label>
+                            <input type="number" id="supp-balance" class="form-control" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">العنوان</label>
+                            <input type="text" id="supp-address" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ملاحظات</label>
+                        <input type="text" id="supp-notes" class="form-control">
+                    </div>
+                    <div class="modal-footer" style="padding: 1rem 0 0 0; background: transparent;">
+                        <button type="submit" class="btn btn-primary">حفظ المورد</button>
+                        <button type="button" class="btn btn-outline modal-cancel">إلغاء</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: NEW PURCHASE INVOICE -->
+    <div id="modal-purchase" class="modal-overlay">
+        <div class="modal-box modal-lg">
+            <div class="modal-header">
+                <div class="modal-title">تسجيل فاتورة مشتريات وتوريد مخزون</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-purchase" onsubmit="event.preventDefault(); savePurchaseInvoice();">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">المورد</label>
+                            <select id="purchase-supplier-select" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">رقم الفاتورة (اختياري)</label>
+                            <input type="text" id="purchase-invoice-no" class="form-control" placeholder="توليد تلقائي">
+                        </div>
+                    </div>
+
+                    <div style="background: var(--bg-surface-alt); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;">
+                        <div class="form-label" style="font-weight: bold;">إضافة أصناف للفاتورة:</div>
+                        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 0.5rem; align-items: end;">
+                            <div>
+                                <select id="purchase-product-select" class="form-control"></select>
+                            </div>
+                            <div>
+                                <input type="number" id="purchase-item-qty" class="form-control" placeholder="الكمية" min="1" value="1">
+                            </div>
+                            <div>
+                                <input type="number" id="purchase-item-cost" class="form-control" step="0.01" placeholder="سعر الشراء">
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-primary" onclick="addItemToPurchase()">إضافة</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>الصنف</th>
+                                    <th>الكمية</th>
+                                    <th>سعر الوحدة</th>
+                                    <th>الإجمالي</th>
+                                    <th>حذف</th>
+                                </tr>
+                            </thead>
+                            <tbody id="purchase-items-table-body">
+                                <tr><td colspan="5" class="text-center text-muted">أضف أصناف أعلاه</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0; padding: 0.75rem; background: var(--bg-surface-alt); border-radius: var(--radius-md);">
+                        <span style="font-weight: bold;">إجمالي فاتورة الشراء:</span>
+                        <span id="purchase-total-display" style="font-weight: 800; font-size: 1.2rem; color: var(--primary);">0.00 ر.س</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">المبلغ المدفوع للمورد</label>
+                            <input type="number" id="purchase-paid-amount" class="form-control" placeholder="اتركه فارغاً للسداد الكامل">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">ملاحظات</label>
+                            <input type="text" id="purchase-notes" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="modal-footer" style="padding: 1rem 0 0 0; background: transparent;">
+                        <button type="submit" class="btn btn-success">تأكيد وحفظ فاتورة الشراء</button>
+                        <button type="button" class="btn btn-outline modal-cancel">إلغاء</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD EXPENSE -->
+    <div id="modal-expense" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">تسجيل مصروف جديد</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-expense" onsubmit="event.preventDefault(); saveExpenseFromModal();">
+                    <div class="form-group">
+                        <label class="form-label">بيان المصروف *</label>
+                        <input type="text" id="exp-title" class="form-control" required placeholder="مثال: فاتورة كهرباء، صيانة مكيف...">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">التصنيف</label>
+                            <select id="exp-category" class="form-control">
+                                <option value="إيجار المحل">إيجار المحل</option>
+                                <option value="كهرباء ومياه وإنترنت">كهرباء ومياه وإنترنت</option>
+                                <option value="رواتب وأجور">رواتب وأجور</option>
+                                <option value="صيانة ومستلزمات">صيانة ومستلزمات</option>
+                                <option value="نقل وشحن">نقل وشحن</option>
+                                <option value="بوفيه وضيافة">بوفيه وضيافة</option>
+                                <option value="مصروفات أخرى">مصروفات أخرى</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">المبلغ *</label>
+                            <input type="number" id="exp-amount" class="form-control" step="0.01" min="0.1" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">التاريخ</label>
+                            <input type="date" id="exp-date" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">ملاحظات</label>
+                            <input type="text" id="exp-notes" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="padding: 1rem 0 0 0; background: transparent;">
+                        <button type="submit" class="btn btn-primary">حفظ المصروف</button>
+                        <button type="button" class="btn btn-outline modal-cancel">إلغاء</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: INVOICE PREVIEW & PRINT -->
+    <div id="modal-invoice" class="modal-overlay">
+        <div class="modal-box modal-lg">
+            <div class="modal-header">
+                <div class="modal-title">معاينة وطباعة الفاتورة</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="invoice-preview-content">
+                    <!-- Invoice dynamically injected here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-print-current-invoice" class="btn btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    طباعة الفاتورة (Receipt)
+                </button>
+                <button type="button" class="btn btn-outline modal-cancel">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HIDDEN CONTAINER FOR NATIVE PRINT ENGINE -->
+    <div id="printable-invoice"></div>
+
+    <!-- TOAST NOTIFICATIONS STACK -->
+    <div id="toast-container"></div>
+
+    <!-- SCRIPT MODULES -->
+    <script src="js/db.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/license.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/customers.js"></script>
+    <script src="js/suppliers.js"></script>
+    <script src="js/sales.js"></script>
+    <script src="js/purchases.js"></script>
+    <script src="js/expenses.js"></script>
+    <script src="js/reports.js"></script>
+    <script src="js/backup.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

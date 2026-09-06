@@ -1,0 +1,6 @@
+{
+  "name": "SmartStore Pro",
+  "description": "تطبيق ويب وإدارة مبيعات ومخزون احترافي، خفيف وسريع يعمل محلياً دون إنترنت مع دعم IndexedDB ونظام فواتير وتقارير متكامل.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
